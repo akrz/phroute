@@ -23,33 +23,38 @@ class RouteCollector implements RouteDataProviderInterface {
     /**
      * @var RouteParser
      */
-    private $routeParser;
+    protected $routeParser;
     /**
      * @var array
      */
-    private $filters = [];
+    protected $filters = [];
     /**
      * @var array
      */
-    private $staticRoutes = [];
+    protected $staticRoutes = [];
     /**
      * @var array
      */
-    private $regexToRoutesMap = [];
+    protected $regexToRoutesMap = [];
     /**
      * @var array
      */
-    private $reverse = [];
+    protected $reverse = [];
 
     /**
      * @var array
      */
-    private $globalFilters = [];
+    protected $globalFilters = [];
 
     /**
      * @var
      */
-    private $globalRoutePrefix;
+    protected $globalRoutePrefix;
+
+    /**
+     * @var array
+     */
+    protected $registeredRoutes = [];
 
     /**
      * @param RouteParser $routeParser
@@ -111,7 +116,7 @@ class RouteCollector implements RouteDataProviderInterface {
      * @return $this
      */
     public function addRoute($httpMethod, $route, $handler, array $filters = []) {
-        
+
         if(is_array($route))
         {
             list($route, $name) = $route;
@@ -120,18 +125,21 @@ class RouteCollector implements RouteDataProviderInterface {
         $route = $this->addPrefix($this->trim($route));
 
         list($routeData, $reverseData) = $this->routeParser->parse($route);
-        
+
         if(isset($name))
         {
             $this->reverse[$name] = $reverseData;
+            $this->registeredRoutes[$httpMethod][] = [
+                'name' => $name, 'path' => $route
+            ];
         }
-        
+
         $filters = array_merge_recursive($this->globalFilters, $filters);
 
-        isset($routeData[1]) ? 
+        isset($routeData[1]) ?
             $this->addVariableRoute($httpMethod, $routeData, $handler, $filters) :
             $this->addStaticRoute($httpMethod, $routeData, $handler, $filters);
-        
+
         return $this;
     }
 
@@ -333,12 +341,12 @@ class RouteCollector implements RouteDataProviderInterface {
                     }
 
                     $this->addRoute($valid, $route . $sep . $methodName . $params, [$classname, $method->name], $filters);
-                    
+
                     break;
                 }
             }
         }
-        
+
         return $this;
     }
 
@@ -451,5 +459,21 @@ class RouteCollector implements RouteDataProviderInterface {
 
         $regex = '~^(?|' . implode('|', $regexes) . ')$~';
         return ['regex' => $regex, 'routeMap' => $routeMap];
+    }
+
+    /**
+     * @return array
+     */
+    public function getReversedRoutes()
+    {
+        return $this->reverse;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRegisteredRoutes()
+    {
+        return $this->registeredRoutes;
     }
 }
