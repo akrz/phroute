@@ -1,12 +1,12 @@
 {
-  "name": "phroute/phroute",
-  "description": "Fast, fully featured restful request router for PHP",
+  "name": "akrz/phroute",
+  "description": "Fast, fully featured restful request router for PHP (fork of phroute/phroute)",
   "keywords": ["routing", "router"],
   "license": "BSD-3-Clause",
   "authors": [
       {
-      "name": "Joe Green",
-      "email": "joe.green.0991@gmail.com"
+      "name": "Cristian Solis",
+      "email": "cristiansolis@gmail.com"
     }
   ],
   "autoload": {
