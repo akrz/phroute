@@ -129,7 +129,8 @@ class RouteCollector implements RouteDataProviderInterface {
         if(isset($name))
         {
             $this->reverse[$name] = $reverseData;
-            $this->registeredRoutes[$httpMethod][] = [
+            $action = explode('.', $name)[0];
+            $this->registeredRoutes[$httpMethod][$action] = [
                 'name' => $name, 'path' => $route
             ];
         }
