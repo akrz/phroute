@@ -57,6 +57,11 @@ class RouteCollector implements RouteDataProviderInterface {
     protected $registeredRoutes = [];
 
     /**
+     * @var array
+     */
+    protected $routesWithFilters = [];
+
+    /**
      * @param RouteParser $routeParser
      */
     public function __construct(RouteParser $routeParser = null) {
@@ -136,6 +141,12 @@ class RouteCollector implements RouteDataProviderInterface {
         }
 
         $filters = array_merge_recursive($this->globalFilters, $filters);
+
+        foreach ($filters as $filter) {
+            foreach ($filter as $item) {
+                $this->routesWithFilters[$item][] = $route;
+            }
+        }
 
         isset($routeData[1]) ?
             $this->addVariableRoute($httpMethod, $routeData, $handler, $filters) :
@@ -476,5 +487,13 @@ class RouteCollector implements RouteDataProviderInterface {
     public function getRegisteredRoutes()
     {
         return $this->registeredRoutes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoutesWithFilters()
+    {
+        return $this->routesWithFilters;
     }
 }
