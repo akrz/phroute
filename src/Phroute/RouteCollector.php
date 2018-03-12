@@ -127,26 +127,20 @@ class RouteCollector implements RouteDataProviderInterface {
             list($route, $name) = $route;
         }
 
+        if (!isset($name)) {
+            throw new BadRouteException("Missing route name for: '$route'");
+        }
+
         $route = $this->addPrefix($this->trim($route));
 
         list($routeData, $reverseData) = $this->routeParser->parse($route);
 
-        if(isset($name))
-        {
-            $this->reverse[$name] = $reverseData;
-            $action = explode('.', $name)[0];
-            $this->registeredRoutes[$httpMethod][$action] = [
-                'name' => $name, 'path' => $route
-            ];
-        }
+        $this->reverse[$name] = $reverseData;
+        $this->generateRegisteredRoutesCollection($httpMethod, $route, $name);
 
         $filters = array_merge_recursive($this->globalFilters, $filters);
 
-        foreach ($filters as $filter) {
-            foreach ($filter as $item) {
-                $this->routesWithFilters[$item][] = $route;
-            }
-        }
+        $this->generateRoutesWithFiltersCollection($route, $filters, $name);
 
         isset($routeData[1]) ?
             $this->addVariableRoute($httpMethod, $routeData, $handler, $filters) :
@@ -495,5 +489,43 @@ class RouteCollector implements RouteDataProviderInterface {
     public function getRoutesWithFilters()
     {
         return $this->routesWithFilters;
+    }
+
+    /**
+     * @param       $route
+     * @param array $filters
+     * @param       $name
+     */
+    private function generateRoutesWithFiltersCollection($route, $filters, $name)
+    {
+        foreach ($filters as $filter) {
+            if (is_array($filter)) {
+                foreach ($filter as $item) {
+                    $this->routesWithFilters[$item][] = [
+                        'name' => $name,
+                        'path' => $route
+                    ];
+                }
+            } else {
+                $this->routesWithFilters[$filter][] = [
+                    'name' => $name,
+                    'path' => $route
+                ];
+            }
+        }
+    }
+
+    /**
+     * @param $httpMethod
+     * @param $route
+     * @param $name
+     */
+    private function generateRegisteredRoutesCollection($httpMethod, $route, $name)
+    {
+        $action = explode('.', $name)[0];
+        $this->registeredRoutes[$httpMethod][$action] = [
+            'name' => $name,
+            'path' => $route
+        ];
     }
 }
