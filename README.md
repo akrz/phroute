@@ -106,8 +106,8 @@ $router->get('/user/{id}?', function($id = null) {
 
 # NB. You can cache the return value from $router->getData() so you don't have to create the routes each request - massive speed gains
 $dispatcher = new Phroute\Phroute\Dispatcher($router->getData());
-
-$response = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+$matchedRoute = $dispatcher->matchRoute($requestMethod, $requestUri);
+$runner = $dispatcher->dispatch($matchedRoute);
     
 // Print out the value returned from the dispatched function
 echo $response;
@@ -271,11 +271,15 @@ $router->controller('/controller', 'MyApp\\Test', ['before' => 'auth']);
 A URI is dispatched by calling the `dispatch()` method of the created dispatcher. This method
 accepts the HTTP method and a URI. Getting those two bits of information (and normalizing them
 appropriately) is your job - this library is not bound to the PHP web SAPIs.
+Check out: http://symfony.com/doc/current/create_framework/http_foundation.html
 
-$response = (new Phroute\Phroute\Dispatcher($router))
-            ->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+```php
+$dispatcher = new Phroute\Phroute\Dispatcher($router->getData());
+$matchedRoute = $dispatcher->matchRoute($requestMethod, $requestUri);
+$response = $dispatcher->dispatch($matchedRoute);
+```
 
-The `dispatch()` method will call the matched route, or if no matches, throw one of the exceptions below:
+The `matchRoute()` method will call the matched route, or if no matches, throw one of the exceptions below:
 
     # Route not found
     Phroute\Phroute\Exception\HttpRouteNotFoundException;
