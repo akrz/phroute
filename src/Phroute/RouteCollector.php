@@ -143,8 +143,8 @@ class RouteCollector implements RouteDataProviderInterface {
         $this->generateRoutesWithFiltersCollection($route, $filters, $name);
 
         isset($routeData[1]) ?
-            $this->addVariableRoute($httpMethod, $routeData, $handler, $filters) :
-            $this->addStaticRoute($httpMethod, $routeData, $handler, $filters);
+            $this->addVariableRoute($httpMethod, $routeData, $handler, $filters, $name) :
+            $this->addStaticRoute($httpMethod, $routeData, $handler, $filters, $name);
 
         return $this;
     }
@@ -154,8 +154,9 @@ class RouteCollector implements RouteDataProviderInterface {
      * @param $routeData
      * @param $handler
      * @param $filters
+     * @param $name
      */
-    private function addStaticRoute($httpMethod, $routeData, $handler, $filters)
+    private function addStaticRoute($httpMethod, $routeData, $handler, $filters, $name)
     {
         $routeStr = $routeData[0];
 
@@ -171,7 +172,7 @@ class RouteCollector implements RouteDataProviderInterface {
             }
         }
 
-        $this->staticRoutes[$routeStr][$httpMethod] = array($handler, $filters, []);
+        $this->staticRoutes[$routeStr][$httpMethod] = array($handler, $filters, [], $name);
     }
 
     /**
@@ -179,8 +180,9 @@ class RouteCollector implements RouteDataProviderInterface {
      * @param $routeData
      * @param $handler
      * @param $filters
+     * @param $name
      */
-    private function addVariableRoute($httpMethod, $routeData, $handler, $filters)
+    private function addVariableRoute($httpMethod, $routeData, $handler, $filters, $name)
     {
         list($regex, $variables) = $routeData;
 
@@ -189,7 +191,7 @@ class RouteCollector implements RouteDataProviderInterface {
             throw new BadRouteException("Cannot register two routes matching '$regex' for method '$httpMethod'");
         }
 
-        $this->regexToRoutesMap[$regex][$httpMethod] = [$handler, $filters, $variables];
+        $this->regexToRoutesMap[$regex][$httpMethod] = [$handler, $filters, $variables, $name];
     }
 
     /**
