@@ -99,7 +99,14 @@ class Dispatcher {
         {
             $handler = $this->handlerResolver->resolve($filter);
 
-            if(($filteredResponse = call_user_func($handler, $response)) !== null)
+            if (is_callable($handler[0])) {
+                $handler = $handler[0];
+                $filteredResponse = $handler($response);
+            } else {
+                $filteredResponse = call_user_func($handler, $response);
+            }
+
+            if($filteredResponse !== null)
             {
                 return $filteredResponse;
             }
