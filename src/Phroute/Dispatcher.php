@@ -78,7 +78,7 @@ class Dispatcher {
         if (is_callable($resolvedHandler[0])) {
             $resolvedHandler = $resolvedHandler[0];
             $vars = array_values($vars);
-            $resolvedHandler(...$vars);
+            $response = $resolvedHandler(...$vars);
         } else {
             $response = call_user_func_array($resolvedHandler, $vars);
         }
