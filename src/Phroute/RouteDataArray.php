@@ -1,7 +1,9 @@
-<?php namespace Phroute\Phroute;
+<?php
 
-class RouteDataArray implements RouteDataInterface {
+namespace Phroute\Phroute;
 
+class RouteDataArray implements RouteDataInterface, \JsonSerializable
+{
     /**
      * @var array
      */
@@ -53,5 +55,17 @@ class RouteDataArray implements RouteDataInterface {
     public function getFilters()
     {
         return $this->filters;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'variableRoutes' => $this->variableRoutes,
+            'staticRoutes' => $this->staticRoutes,
+            'filters' => $this->filters,
+        ];
     }
 }
