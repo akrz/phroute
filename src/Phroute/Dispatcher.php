@@ -75,7 +75,7 @@ class Dispatcher {
         }
 
         $resolvedHandler = $this->handlerResolver->resolve($handler);
-        if (is_callable($resolvedHandler[0])) {
+        if (is_array($resolvedHandler)) {
             $resolvedHandler = $resolvedHandler[0];
             $vars = array_values($vars);
             $response = $resolvedHandler(...$vars);
