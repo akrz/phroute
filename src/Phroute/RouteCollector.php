@@ -524,10 +524,10 @@ class RouteCollector implements RouteDataProviderInterface {
      */
     private function generateRegisteredRoutesCollection($httpMethod, $route, $name)
     {
-        $action = explode('.', $name)[0];
-        $this->registeredRoutes[$httpMethod][$action] = [
+        $this->registeredRoutes[$route][] = [
             'name' => $name,
-            'path' => $route
+            'path' => $route,
+            'method' => $httpMethod,
         ];
     }
 }
