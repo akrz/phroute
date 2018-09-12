@@ -136,7 +136,7 @@ class RouteCollector implements RouteDataProviderInterface {
         list($routeData, $reverseData) = $this->routeParser->parse($route);
 
         $this->reverse[$name] = $reverseData;
-        $this->generateRegisteredRoutesCollection($httpMethod, $route, $name);
+        $this->generateRegisteredRoutesCollection($httpMethod, $route, $name, $handler);
 
         $filters = array_merge_recursive($this->globalFilters, $filters);
 
@@ -521,13 +521,15 @@ class RouteCollector implements RouteDataProviderInterface {
      * @param $httpMethod
      * @param $route
      * @param $name
+     * @param array $handler
      */
-    private function generateRegisteredRoutesCollection($httpMethod, $route, $name)
+    private function generateRegisteredRoutesCollection($httpMethod, $route, $name, $handler)
     {
         $this->registeredRoutes[$route][] = [
             'name' => $name,
             'path' => $route,
             'method' => $httpMethod,
+            'handler' => $handler[0]
         ];
     }
 }
