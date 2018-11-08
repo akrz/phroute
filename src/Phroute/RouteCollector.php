@@ -120,7 +120,7 @@ class RouteCollector implements RouteDataProviderInterface {
      * @param array $filters
      * @return $this
      */
-    public function addRoute($httpMethod, $route, $handler, array $filters = []) {
+    public function addRoute($httpMethod, $route, $handler, array $filters = [], array $defaults = []) {
 
         if(is_array($route))
         {
@@ -143,8 +143,8 @@ class RouteCollector implements RouteDataProviderInterface {
         $this->generateRoutesWithFiltersCollection($route, $filters, $name);
 
         isset($routeData[1]) ?
-            $this->addVariableRoute($httpMethod, $routeData, $handler, $filters, $name) :
-            $this->addStaticRoute($httpMethod, $routeData, $handler, $filters, $name);
+            $this->addVariableRoute($httpMethod, $routeData, $handler, $filters, $name, $defaults) :
+            $this->addStaticRoute($httpMethod, $routeData, $handler, $filters, $name, $defaults);
 
         return $this;
     }
@@ -154,9 +154,11 @@ class RouteCollector implements RouteDataProviderInterface {
      * @param $routeData
      * @param $handler
      * @param $filters
+     * @param $defaults
+     *
      * @param $name
      */
-    private function addStaticRoute($httpMethod, $routeData, $handler, $filters, $name)
+    private function addStaticRoute($httpMethod, $routeData, $handler, $filters, $name, array $defaults = [])
     {
         $routeStr = $routeData[0];
 
@@ -172,7 +174,7 @@ class RouteCollector implements RouteDataProviderInterface {
             }
         }
 
-        $this->staticRoutes[$routeStr][$httpMethod] = array($handler, $filters, [], $name);
+        $this->staticRoutes[$routeStr][$httpMethod] = array($handler, $filters, [], $name, $defaults);
     }
 
     /**
@@ -180,9 +182,11 @@ class RouteCollector implements RouteDataProviderInterface {
      * @param $routeData
      * @param $handler
      * @param $filters
+     * @param $defaults
+     *
      * @param $name
      */
-    private function addVariableRoute($httpMethod, $routeData, $handler, $filters, $name)
+    private function addVariableRoute($httpMethod, $routeData, $handler, $filters, $name, array $defaults = [])
     {
         list($regex, $variables) = $routeData;
 
@@ -191,7 +195,7 @@ class RouteCollector implements RouteDataProviderInterface {
             throw new BadRouteException("Cannot register two routes matching '$regex' for method '$httpMethod'");
         }
 
-        $this->regexToRoutesMap[$regex][$httpMethod] = [$handler, $filters, $variables, $name];
+        $this->regexToRoutesMap[$regex][$httpMethod] = [$handler, $filters, $variables, $name, $defaults];
     }
 
     /**
@@ -235,11 +239,13 @@ class RouteCollector implements RouteDataProviderInterface {
      * @param $route
      * @param $handler
      * @param array $filters
+     * @param array $defaults
+     *
      * @return RouteCollector
      */
-    public function get($route, $handler, array $filters = [])
+    public function get($route, $handler, array $filters = [], array $defaults = [])
     {
-        return $this->addRoute(Route::GET, $route, $handler, $filters);
+        return $this->addRoute(Route::GET, $route, $handler, $filters, $defaults);
     }
 
     /**

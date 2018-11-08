@@ -42,14 +42,15 @@ class Dispatcher {
      */
     public function matchRoute($httpMethod, $uri)
     {
-        list($handler, $filters, $vars, $name) = $this->dispatchRoute($httpMethod, trim($uri, '/'));
+        list($handler, $filters, $vars, $name, $defaults) = $this->dispatchRoute($httpMethod, trim($uri, '/'));
 
         $route = new Route();
         $route
             ->setHandler($handler)
             ->setFilters($filters)
             ->setVars($vars)
-            ->setName($name);
+            ->setName($name)
+            ->setDefaults($defaults);
 
         return $route;
     }

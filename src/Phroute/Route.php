@@ -34,6 +34,7 @@ class Route {
     private $filters;
     private $vars;
     private $name;
+    private $defaults;
 
     /**
      * @return mixed
@@ -111,6 +112,26 @@ class Route {
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaults()
+    {
+        return $this->defaults;
+    }
+
+    /**
+     * @param mixed $defaults
+     *
+     * @return Route
+     */
+    public function setDefaults($defaults)
+    {
+        $this->defaults = $defaults;
 
         return $this;
     }
