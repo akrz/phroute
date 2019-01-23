@@ -186,6 +186,10 @@ class Dispatcher {
      */
     private function checkFallbacks($routes, $httpMethod)
     {
+        if ($httpMethod === Route::OPTIONS) {
+            throw new HttpMethodNotAllowedException('Allow: ' . implode(', ', array_keys($routes)));
+        }
+        
         $additional = array(Route::ANY);
 
         if($httpMethod === Route::HEAD)
