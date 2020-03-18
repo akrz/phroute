@@ -39,6 +39,7 @@ class Dispatcher {
      * @param $uri
      *
      * @return \Phroute\Phroute\Route
+     * @throws \Phroute\Phroute\Exception\HttpRouteNotFoundException
      */
     public function matchRoute($httpMethod, $uri)
     {
@@ -145,7 +146,10 @@ class Dispatcher {
      *
      * @param $httpMethod
      * @param $uri
+     *            
+     * @return mixed
      * @throws Exception\HttpRouteNotFoundException
+     * @throws \Phroute\Phroute\Exception\HttpMethodNotAllowedException
      */
     private function dispatchRoute($httpMethod, $uri)
     {
@@ -182,6 +186,7 @@ class Dispatcher {
      *
      * @param $routes
      * @param $httpMethod
+     * @return mixed
      * @throws Exception\HttpMethodNotAllowedException
      */
     private function checkFallbacks($routes, $httpMethod)
@@ -189,7 +194,7 @@ class Dispatcher {
         if ($httpMethod === Route::OPTIONS) {
             throw new HttpMethodNotAllowedException('Allow: ' . implode(', ', array_keys($routes)));
         }
-        
+
         $additional = array(Route::ANY);
 
         if($httpMethod === Route::HEAD)
@@ -213,6 +218,7 @@ class Dispatcher {
      *
      * @param $httpMethod
      * @param $uri
+     * @return mixed
      * @throws Exception\HttpMethodNotAllowedException
      * @throws Exception\HttpRouteNotFoundException
      */
