@@ -40,6 +40,7 @@ class Dispatcher {
      *
      * @return \Phroute\Phroute\Route
      * @throws \Phroute\Phroute\Exception\HttpRouteNotFoundException
+     * @throws \Phroute\Phroute\Exception\HttpMethodNotAllowedException
      */
     public function matchRoute($httpMethod, $uri)
     {
